@@ -1,0 +1,83 @@
+{
+  "manifest_version": 3,
+  "name": "AI Inbox Manager",
+  "version": "1.0.0",
+  "description": "AI-powered email management with smart summaries, priority classification, and auto-replies",
+  "permissions": [
+    "storage",
+    "activeTab",
+    "identity",
+    "scripting",
+    "tabs"
+  ],
+  "host_permissions": [
+    "https://mail.google.com/*",
+    "https://outlook.live.com/*",
+    "https://outlook.office.com/*",
+    "https://outlook.office365.com/*",
+    "http://localhost:8000/*",
+    "http://localhost:3000/*"
+  ],
+  "background": {
+    "service_worker": "background.js"
+  },
+"content_scripts": [
+        {
+            "matches": ["https://mail.google.com/*"],
+            "js": [
+                "utils/dom-utils.js",
+                "content/gmail-detector.js",
+                "content/gmail-injector.js"
+            ],
+            "css": ["styles/sidebar.css"],
+            "run_at": "document_idle"
+        },
+        {
+            "matches": ["https://outlook.live.com/*", "https://outlook.office.com/*"],
+            "js": [
+                "utils/dom-utils.js",
+                "content/outlook-detector.js",
+                "content/outlook-injector.js"
+            ],
+            "css": ["styles/sidebar.css"],
+            "run_at": "document_idle"
+        },
+        {
+            "matches": ["http://localhost:3000/*"],
+            "js": ["content/dashboard-listener.js"],
+            "run_at": "document_idle"
+        }
+    ],
+  "action": {
+    "default_popup": "popup/popup.html",
+    "default_icon": {
+      "16": "icons/icon16.png",
+      "32": "icons/icon32.png",
+      "48": "icons/icon48.png",
+      "128": "icons/icon128.png"
+    }
+  },
+  "icons": {
+    "16": "icons/icon16.png",
+    "32": "icons/icon32.png",
+    "48": "icons/icon48.png",
+    "128": "icons/icon128.png"
+  },
+  "web_accessible_resources": [
+    {
+      "resources": [
+        "sidebar/sidebar.html",
+        "sidebar/sidebar.js",
+        "sidebar/sidebar.css",
+        "styles/sidebar.css",
+        "icons/*"
+      ],
+      "matches": [
+        "https://mail.google.com/*",
+        "https://outlook.live.com/*",
+        "https://outlook.office.com/*",
+        "https://outlook.office365.com/*"
+      ]
+    }
+  ]
+}

@@ -1,0 +1,190 @@
+📘 Backend API Endpoints Specification
+Version: 1.0
+Backend: FastAPI
+Auth: JWT
+Format: JSON
+Base URL: /api/v1
+
+1. Authentication & User APIs
+1.1 Sign Up / Login
+POST /auth/login
+Authenticate user, return JWT.
+POST /auth/signup
+Create a new user.
+GET /auth/me
+Returns the authenticated user.
+
+2. Google OAuth (Gmail)
+2.1 Start OAuth
+GET /auth/google/start
+Redirect URL for Google OAuth consent.
+Query Params:
+redirect_url
+2.2 OAuth Callback
+GET /auth/google/callback
+Handles Google OAuth callback, stores refresh token.
+Returns:
+Account connected
+Email address
+Token stored
+
+3. Microsoft OAuth (Outlook)
+3.1 Start OAuth
+GET /auth/outlook/start
+3.2 OAuth Callback
+GET /auth/outlook/callback
+Same as Gmail but via Microsoft Graph.
+
+4. Email Sync & Threads
+4.1 Trigger Manual Sync
+POST /emails/sync
+Forces sync (testing/dev use).
+4.2 List Email Threads
+GET /threads
+Query params:
+limit=50
+offset=0
+priority
+sentiment
+search
+4.3 Get Thread Details
+GET /threads/{thread_id}
+Returns:
+Full emails in thread
+AI summary
+Sentiment
+Priority
+Tasks
+Reply draft
+4.4 Get Raw Email
+GET /emails/{email_id}
+Returns full email body (clean + HTML).
+
+5. AI Processing Endpoints
+5.1 Summarize Thread
+POST /ai/summarize
+Body:
+{
+  "thread_id": "abc123"
+}
+5.2 Classify Priority
+POST /ai/classify
+Determines:
+urgency
+category
+5.3 Sentiment Analysis
+POST /ai/sentiment
+5.4 Extract Tasks
+POST /ai/tasks/extract
+Returns:
+{
+  "tasks": [
+    {
+      "title": "",
+      "due_date": "",
+      "owner": "",
+      "description": ""
+    }
+  ]
+}
+5.5 Generate Auto Reply
+POST /ai/reply
+Uses:
+thread
+company context
+tone
+intent
+user history
+Body:
+{
+  "thread_id": "abc123"
+}
+Returns:
+{
+  "reply": "Draft reply text..."
+}
+
+6. Company Context Endpoints
+6.1 Get Context
+GET /context
+6.2 Update Context
+PUT /context
+Body:
+{
+  "tone": "friendly and concise",
+  "company_description": "...",
+  "products": ["AI manager", "Analytics"],
+  "policies": { ... },
+  "faq": [...],
+  "roles": {
+     "billing": "John",
+     "support": "Rita"
+  }
+}
+6.3 Delete Context Section
+DELETE /context/{section}
+
+7. Slack Integration
+7.1 Connect Slack
+GET /integrations/slack/start
+7.2 Slack OAuth Callback
+GET /integrations/slack/callback
+7.3 Test Slack Connection
+POST /integrations/slack/test
+7.4 Send Manual Slack Alert
+POST /integrations/slack/alert
+
+8. Task Management Integrations
+Supported Tools: Notion, ClickUp, Jira, Trello
+
+8.1 Connect Integration
+GET /integrations/{tool}/start
+8.2 Integration Callback
+GET /integrations/{tool}/callback
+8.3 Create Task in Tool
+POST /integrations/{tool}/task
+Body:
+{
+  "task": {
+    "title": "",
+    "description": "",
+    "due_date": ""
+  }
+}
+
+9. Internal Webhooks
+These are called by Gmail/Outlook or Slack.
+9.1 Gmail Push Notification
+POST /webhooks/gmail
+9.2 Outlook Subscription Webhook
+POST /webhooks/outlook
+9.3 Slack Events
+POST /webhooks/slack/events
+
+10. Analytics Endpoints
+10.1 Dashboard Metrics
+GET /analytics/overview
+Returns:
+SLA breaches this week
+Urgent emails
+Avg response time
+Tasks extracted
+AI usage
+10.2 Email Statistics
+GET /analytics/emails
+
+11. User & Account Settings
+11.1 Update Profile
+PUT /user/profile
+11.2 Change Password
+PUT /user/password
+11.3 Delete Account
+DELETE /user
+
+12. Health & Debug
+12.1 Health Check
+GET /health
+12.2 Test AI Pipeline
+POST /debug/ai
+12.3 Test Email Sync
+POST /debug/sync

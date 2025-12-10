@@ -1,0 +1,62 @@
+# General
+.DS_Store
+Thumbs.db
+*.log
+tmp/
+temp/
+
+# IDEs
+.vscode/
+.idea/
+*.swp
+*.swo
+
+# Python / Backend
+backend/__pycache__/
+backend/**/*.py[cod]
+backend/venv/
+backend/.venv/
+backend/env/
+backend/.env
+backend/.env.*
+backend/*.db
+backend/*.sqlite
+backend/*.sqlite3
+backend/.pytest_cache/
+backend/.coverage
+backend/htmlcov/
+backend/celerybeat-schedule
+
+# Node.js / Web Dashboard
+web-dashboard/node_modules/
+web-dashboard/.next/
+web-dashboard/out/
+web-dashboard/build/
+web-dashboard/dist/
+web-dashboard/.env
+web-dashboard/.env.local
+web-dashboard/.env.development.local
+web-dashboard/.env.test.local
+web-dashboard/.env.production.local
+web-dashboard/npm-debug.log*
+web-dashboard/yarn-error.log*
+web-dashboard/pnpm-debug.log*
+
+# Chrome Extension
+chrome-extension/node_modules/
+chrome-extension/dist/
+chrome-extension/build/
+
+# Secrets & Credentials (CRITICAL)
+client_secret_*.json
+credentials.json
+token.json
+service_account.json
+*.pem
+*.key
+
+# Docker
+.docker/
+
+# OS Generated
+Desktop.ini

@@ -1,0 +1,138 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>AI Inbox Manager - Settings</title>
+  <link rel="stylesheet" href="popup.css">
+</head>
+<body>
+  <div class="popup-container">
+
+    <!-- Header -->
+    <div class="popup-header">
+      <h1>AI Inbox Manager</h1>
+      <p class="version">v1.0.0</p>
+    </div>
+
+    <!-- Auth Status -->
+    <div id="auth-status" class="section">
+      <h2>Account</h2>
+      <div id="logged-in" class="auth-info" style="display: none;">
+        <div class="status-badge status-success">
+          <svg width="16" height="16" viewBox="0 0 16 16" fill="none">
+            <circle cx="8" cy="8" r="7" stroke="currentColor" stroke-width="2"/>
+            <path d="M5 8L7 10L11 6" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
+          </svg>
+          Connected
+        </div>
+        <p id="user-email" class="user-email"></p>
+        <button id="logout-btn" class="btn btn-secondary">Sign Out</button>
+      </div>
+      <div id="logged-out" class="auth-info" style="display: none;">
+        <div class="status-badge status-error">
+          <svg width="16" height="16" viewBox="0 0 16 16" fill="none">
+            <circle cx="8" cy="8" r="7" stroke="currentColor" stroke-width="2"/>
+            <path d="M8 4V9M8 11V12" stroke="currentColor" stroke-width="2" stroke-linecap="round"/>
+          </svg>
+          Not Connected
+        </div>
+        <button id="login-btn" class="btn btn-primary">Sign In</button>
+      </div>
+    </div>
+
+    <!-- Features -->
+    <div class="section">
+      <h2>Features</h2>
+      <div class="feature-list">
+        <div class="feature-item">
+          <svg width="20" height="20" viewBox="0 0 20 20" fill="currentColor">
+            <path d="M4 4h12v2H4V4zm0 5h12v2H4V9zm0 5h8v2H4v-2z"/>
+          </svg>
+          <span>AI Email Summaries</span>
+        </div>
+        <div class="feature-item">
+          <svg width="20" height="20" viewBox="0 0 20 20" fill="currentColor">
+            <path d="M10 2l2 6h6l-5 4 2 6-5-4-5 4 2-6-5-4h6l2-6z"/>
+          </svg>
+          <span>Priority Classification</span>
+        </div>
+        <div class="feature-item">
+          <svg width="20" height="20" viewBox="0 0 20 20" fill="currentColor">
+            <circle cx="10" cy="7" r="3"/>
+            <path d="M10 11c-3.3 0-6 2.7-6 6h12c0-3.3-2.7-6-6-6z"/>
+          </svg>
+          <span>Sentiment Analysis</span>
+        </div>
+        <div class="feature-item">
+          <svg width="20" height="20" viewBox="0 0 20 20" fill="currentColor">
+            <path d="M7 10l3 3 6-6"/>
+          </svg>
+          <span>Task Extraction</span>
+        </div>
+        <div class="feature-item">
+          <svg width="20" height="20" viewBox="0 0 20 20" fill="currentColor">
+            <path d="M2 4h16v2H2V4zm0 5h16v8H2V9z"/>
+          </svg>
+          <span>Auto-Reply Drafts</span>
+        </div>
+      </div>
+    </div>
+
+    <!-- Settings -->
+    <div class="section">
+      <h2>Settings</h2>
+      <div class="setting-item">
+        <label class="switch">
+          <input type="checkbox" id="sidebar-enabled" checked>
+          <span class="slider"></span>
+        </label>
+        <span>Show AI Sidebar</span>
+      </div>
+      <div class="setting-item">
+        <label class="switch">
+          <input type="checkbox" id="auto-process" checked>
+          <span class="slider"></span>
+        </label>
+        <span>Auto-process New Emails</span>
+      </div>
+    </div>
+
+    <!-- Links -->
+    <div class="section">
+      <h2>Resources</h2>
+      <div class="link-list">
+        <a href="#" id="open-dashboard" class="link-item">
+          <svg width="16" height="16" viewBox="0 0 16 16" fill="none">
+            <rect x="2" y="2" width="12" height="12" rx="2" stroke="currentColor" stroke-width="1.5"/>
+            <path d="M6 2V14M2 10H14" stroke="currentColor" stroke-width="1.5"/>
+          </svg>
+          Open Dashboard
+        </a>
+        <a href="#" id="view-docs" class="link-item">
+          <svg width="16" height="16" viewBox="0 0 16 16" fill="none">
+            <path d="M4 2h8l2 2v10H4V2z" stroke="currentColor" stroke-width="1.5"/>
+            <path d="M6 6h4M6 9h4M6 12h2" stroke="currentColor" stroke-width="1.5" stroke-linecap="round"/>
+          </svg>
+          Documentation
+        </a>
+        <a href="#" id="report-issue" class="link-item">
+          <svg width="16" height="16" viewBox="0 0 16 16" fill="none">
+            <circle cx="8" cy="8" r="6" stroke="currentColor" stroke-width="1.5"/>
+            <path d="M8 5V9M8 11v1" stroke="currentColor" stroke-width="1.5" stroke-linecap="round"/>
+          </svg>
+          Report Issue
+        </a>
+      </div>
+    </div>
+
+    <!-- Footer -->
+    <div class="popup-footer">
+      <p>&copy; 2025 AI Inbox Manager</p>
+    </div>
+
+  </div>
+
+  <script src="popup.js"></script>
+</body>
+</html>

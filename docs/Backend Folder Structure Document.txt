@@ -1,0 +1,184 @@
+📘 Backend Folder Structure Document (FastAPI + PostgreSQL + Redis + Workers)
+Version: 1.0
+Backend: FastAPI (Python 3.10+)
+DB: PostgreSQL
+Queue: Redis + RQ/Celery
+Storage: S3 / R2
+Auth: OAuth2 + JWT
+
+📁 1. Root Folder Structure
+backend/
+├── app/
+│   ├── main.py
+│   ├── config.py
+│   ├── dependencies.py
+│   ├── middleware.py
+│   ├── router.py
+│   ├── __init__.py
+│
+├── routers/
+├── services/
+├── workers/
+├── models/
+├── schemas/
+├── utils/
+├── core/
+├── db/
+├── tests/
+├── scripts/
+├── static/
+├── requirements.txt
+├── Dockerfile
+└── README.md
+Now let's break each folder down.
+
+📂 2. app/ — Application Setup & Entry Point
+app/
+│── main.py
+│── config.py
+│── dependencies.py
+│── middleware.py
+│── router.py
+└── __init__.py
+What each file does:
+
+📂 3. routers/ — All API Endpoints
+routers/
+├── auth.py
+├── users.py
+├── emails.py
+├── threads.py
+├── context.py
+├── ai.py
+├── integrations.py
+├── slack.py
+├── gmail.py
+└── outlook.py
+Folder Purpose
+All REST endpoints exposed to your frontend + extension.
+API responsibilities:
+This keeps your backend modular and readable.
+
+📂 4. services/ — Business Logic Layer
+services/
+├── gmail_service.py
+├── outlook_service.py
+├── slack_service.py
+├── clickup_service.py
+├── notion_service.py
+├── ai_orchestrator.py
+├── summarizer.py
+├── classifier.py
+├── task_extractor.py
+└── reply_generator.py
+This folder contains:
+Core logic
+External API clients
+LLM prompt builders
+Email sync pipeline steps
+Responsibilities:
+This folder = the brain of your application.
+
+📂 5. workers/ — Background Jobs
+workers/
+├── email_sync_worker.py
+├── ai_worker.py
+├── slack_worker.py
+└── schedule.py
+Responsibilities:
+Workers decouple your backend from long-running tasks.
+This prevents API from blocking.
+
+📂 6. models/ — Database ORM Models
+models/
+├── user.py
+├── account_tokens.py
+├── email.py
+├── thread.py
+├── company_context.py
+├── integration.py
+└── base.py
+Uses SQLAlchemy 2.0 or SQLModel.
+Key tables:
+
+📂 7. schemas/ — Pydantic Data Schemas
+schemas/
+├── auth.py
+├── email.py
+├── thread.py
+├── ai.py
+├── context.py
+└── user.py
+Schemas ensure:
+Strong typing
+Clean API contracts
+Validation for frontend <-> backend
+
+📂 8. core/ — Core Logic & Security Layer
+core/
+├── security.py
+├── oauth.py
+├── auth_utils.py
+├── rate_limiting.py
+└── exceptions.py
+Responsibilities:
+JWT issuing
+Password hashing
+OAuth helper functions
+Custom exceptions
+Rate limiting (Redis)
+
+📂 9. db/ — Database Initialization
+db/
+├── session.py
+├── migrations/
+└── init_db.py
+Using:
+PostgreSQL
+Alembic migrations
+Handles DB session lifecycle.
+
+📂 10. utils/ — Utility Functions
+utils/
+├── email_parser.py
+├── html_cleaner.py
+├── token_encryption.py
+├── logging.py
+└── time.py
+Especially important:
+HTML email → clean text
+Attachment parsing
+Encrypting Gmail/Outlook refresh tokens
+
+📂 11. scripts/ — Admin Scripts
+scripts/
+├── create_admin.py
+├── test_oauth.py
+└── manual_sync.py
+Useful for debugging.
+
+📂 12. tests/ — Full Test Suite
+tests/
+├── unit/
+├── integration/
+└── e2e/
+Use:
+pytest
+HTTPX test client
+
+🏗️ Final Folder Structure Snapshot (Clean Version)
+backend/
+├── app/
+├── routers/
+├── services/
+├── workers/
+├── models/
+├── schemas/
+├── core/
+├── db/
+├── utils/
+├── tests/
+├── scripts/
+├── requirements.txt
+└── Dockerfile
+

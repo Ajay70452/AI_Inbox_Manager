@@ -1,0 +1,243 @@
+🚀 1. Overall Frontend Architecture
+You will have two separate frontends:
+A. Web App (React / Next.js)
+For:
+Onboarding
+OAuth initiation
+Company context setup
+Integrations (Slack, Notion, ClickUp)
+Dashboard + analytics
+Settings
+B. Chrome Extension (React + Vite)
+For:
+Inline AI inside Gmail/Outlook
+Quick actions
+Reply drafts
+Summaries
+Tasks
+Both share some code, but run in different environments.
+
+📁 2. Web App — Folder Structure (Next.js)
+/frontend
+ ├── /app
+ │    ├── layout.tsx
+ │    ├── page.tsx (Dashboard)
+ │    ├── /auth
+ │    │     ├── signin/page.tsx
+ │    │     ├── callback/google/page.tsx
+ │    │     └── callback/outlook/page.tsx
+ │    ├── /settings
+ │    │     ├── company/page.tsx
+ │    │     ├── integrations/page.tsx
+ │    │     ├── context/page.tsx
+ │    │     └── team/page.tsx
+ │    ├── /emails
+ │    │     ├── [threadId]/page.tsx
+ │    │     └── page.tsx
+ │    ├── /logs
+ │    └── /analytics
+ │
+ ├── /components
+ │    ├── ui (shared components)
+ │    ├── forms
+ │    ├── charts
+ │    ├── inbox
+ │    ├── context-editor
+ │    └── integration-cards
+ │
+ ├── /lib
+ │    ├── api.ts (Axios wrapper)
+ │    ├── auth.ts
+ │    ├── helpers.ts
+ │    ├── constants.ts
+ │    └── validation.ts
+ │
+ ├── /hooks
+ │    ├── useUser.ts
+ │    ├── useEmails.ts
+ │    ├── useIntegrations.ts
+ │    └── useCompanyContext.ts
+ │
+ ├── /store
+ │    ├── userStore.ts
+ │    ├── emailStore.ts
+ │    └── uiStore.ts
+ │
+ ├── /styles
+ │    └── globals.css
+ │
+ ├── /assets
+ │    └── logos, icons, svgs
+ │
+ └── package.json
+
+📁 3. Chrome Extension — Folder Structure
+/extension
+ ├── /src
+ │   ├── index.tsx (entry point)
+ │   ├── /content-scripts
+ │   │     └── gmail.ts (DOM observer)
+ │   ├── /background
+ │   │     └── index.ts
+ │   ├── /components
+ │   │     ├── Sidebar.tsx
+ │   │     ├── SummaryCard.tsx
+ │   │     ├── ReplyDraft.tsx
+ │   │     ├── PriorityBadge.tsx
+ │   │     └── TasksList.tsx
+ │   ├── /hooks
+ │   ├── /lib
+ │   └── manifest.json
+ └── package.json
+This mirrors the web app structure but optimised for in-Gmail UI.
+
+🎨 4. UI/UX Guidelines (Very Important)
+Look & Feel
+Clean, minimal, b2b SaaS
+White + grey palette
+Accent color for priority/emotion states
+Consistent spacing system: 4/8/12/16/24px
+Components You Should Build:
+<Card />
+<Input />
+<Button />
+<Badge />
+<Modal />
+<Sidebar />
+<LoadingOverlay />
+<IntegrationButton />
+Use your own design tokens:
+--primary-color
+--bg-light
+--bg-dark
+--text-primary
+--radius-lg
+--shadow-sm
+
+🧩 5. State Management Guidelines
+Use:
+Zustand for global state:
+User
+Integration status
+Company context
+UI preferences
+React Query for server API state:
+Emails
+Summaries
+Tasks
+Slack alert settings
+This is the correct separation:
+Zustand → Client state
+React Query → Server state
+
+🔌 6. API Interaction Guidelines
+API Wrapper (lib/api.ts)
+Axios instance
+Inject JWT in headers
+Automatic error wrapping
+Example:
+import axios from "axios";
+
+export const api = axios.create({
+  baseURL: process.env.NEXT_PUBLIC_API_URL,
+  withCredentials: true,
+});
+
+api.interceptors.response.use(
+  (res) => res,
+  (err) => {
+    console.error(err);
+    throw err?.response?.data || "API_ERROR";
+  }
+);
+
+🔐 7. Authentication + Routing
+Flow:
+User visits web app
+Signs in using our auth (email/password or magic link)
+Connect Gmail/Outlook via OAuth
+Redirect to dashboard
+Protect routes using:
+export default function ProtectedRoute({ children }) {
+    const { user } = useUser()
+    if (!user) return <Redirect to="/auth/signin" />
+    return children
+}
+
+💬 8. Inbox Views Guidelines
+Email Thread View Contains:
+Summary
+Sentiment score
+Priority label
+Suggested reply draft
+Extracted tasks
+Slack escalation toggle
+Metadata (sender, timestamp)
+List View:
+Subject
+Priority badge
+Sentiment indicator
+“AI summary on hover”
+Thread length
+Status (Replied / Pending)
+
+🧠 9. Company Context Editor Guidelines
+The company context is the brain of your system.
+Make it easy to manage.
+Editor Tabs:
+About company
+Tone guide
+Product info
+FAQ
+Policies (refund, SLA, onboarding)
+Team roles (billing, support, sales)
+Use a smart editor with:
+Markdown support
+AI “rewrite / improve” button
+
+✨ 10. Chrome Extension UI Guidelines
+Sidebar (Right Side of Gmail)
+Sections:
+Summary
+Priority
+Sentiment
+AI Reply Draft
+Extracted Tasks
+"Send to ClickUp / Notion / Slack" buttons
+UI rules:
+Must be narrow (300–340px)
+Must match Gmail styling
+Should animate in/out smoothly
+Must collapse when no email is selected
+Must sync instantly with backend
+
+⚠️ 11. Error Handling Guidelines
+Show toast notifications for:
+API errors
+Failed AI generation
+Failed Slack alerts
+Invalid config
+Examples:
+Something went wrong while generating the reply.
+Slack integration is not connected.
+Could not fetch emails. Please reconnect Gmail.
+
+⚡ 12. Performance Guidelines
+Debounce search input by 300ms
+Use React Query caching
+Paginate email lists
+Pre-fetch next 5 threads
+Memoize heavy components
+Lazy-load charts + analytics
+
+🧱 13. Reusability Principles
+All logic must be reusable across:
+Web App
+Chrome Extension
+Use shared libs for:
+Text parsing
+Gmail/Outlook formatting handling
+Sentiment color mapping
+Priority → badge rules
+Task standardization
+Create a /packages/shared folder later (phase 2).

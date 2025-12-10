@@ -1,0 +1,290 @@
+📘 PRODUCT REQUIREMENT DOCUMENT (PRD)
+AI Inbox Manager (Gmail & Outlook)
+Version: 1.0 (Phase 1 MVP)
+Owner: Ajay Raval
+Product: AI-powered inbox automation for SMB teams
+Platforms: Web App + Chrome Extension + Slack Integration
+
+1. Product Overview
+1.1 Summary
+AI Inbox Manager is a SaaS tool built on top of Gmail and Outlook that adds an AI layer for SMB teams. It prioritizes emails, detects urgent sentiment, drafts replies, extracts tasks, and triggers alerts—without requiring users to leave their existing inbox.
+The app turns unstructured email chaos into actionable workflows.
+
+1.2 Target Users
+Customer support teams
+Sales teams
+Operations teams
+Founders handling clients directly
+Agencies managing multiple client inboxes
+
+1.3 Problem
+SMBs depend heavily on email, but:
+High-priority emails get lost.
+Response times are slow.
+Humans manually extract tasks, tickets, invoices.
+No unified system for escalation or ownership.
+Writing responses consumes significant time.
+Teams don't want to switch tools (Zendesk, Freshdesk).
+They want automation inside Gmail/Outlook.
+
+1.4 Value Proposition
+Respond 3× faster
+Never miss an urgent email
+Convert email clutter into structured tasks
+Draft replies instantly with AI + company context
+Plug-and-play with existing inbox tools
+
+2. Goals & Success Metrics
+2.1 Primary Goals
+Reduce email response time.
+Automatically detect urgent emails.
+Draft high-quality replies with accuracy.
+Convert emails into actionable tasks.
+Provide impressive engineering depth for portfolio review.
+
+2.2 Success Metrics (Phase 1)
+AI-drafted reply accuracy ≥ 80% (users accept replies without major edits)
+Priority classification accuracy ≥ 85%
+Sentiment detection accuracy ≥ 90%
+Task extraction usage per user per day ≥ 3+ tasks
+Daily Slack alerts (correctly triggered) ≥ 70% accuracy
+
+3. Feature Scope (Phase 1 MVP)
+ 3.1 OAuth Integration (Gmail + Outlook)
+Description
+Allow users to securely connect their email inbox.
+Requirements
+Google OAuth (Gmail API)
+Microsoft Graph OAuth (Outlook/Office 365)
+Store refresh tokens securely
+Background sync job pulls email
+Permissions: read, read/send (though sending is user-triggered)
+Non-Functional
+Must refresh tokens automatically
+Must handle token expiry gracefully
+
+⭐ 3.2 Inbox Sync Engine
+Description
+Fetch the latest emails + threads.
+Requirements
+Fetch last 30–90 days of emails
+Store normalized thread objects
+Maintain a “sync cursor” for incremental sync
+Store:
+subject
+snippet
+full body (HTML + plain)
+sender/recipient
+timestamps
+thread ID
+
+⭐ 3.3 Email Summarization
+Description
+AI summarizes email threads.
+Requirements
+Thread-level summary
+"Explain this thread" feature
+Output <120 words summary
+Show in web dashboard + Chrome extension
+
+⭐ 3.4 Priority Classification
+Description
+Automatically classify emails.
+Categories
+Urgent
+Customer
+Vendor
+Internal
+Low priority
+Newsletter / Bulk
+Rules
+Hybrid model: LLM + heuristics.
+
+⭐ 3.5 Sentiment Detection + Escalation
+Description
+Detect emotional tone and urgency, auto-escalate critical messages.
+Requirements
+Detect angry/frustrated tone
+Identify SLA breaches:
+No reply within X hours → Slack alert
+Slack integration:
+Summary
+Severity score
+Suggested owner
+
+⭐ 3.6 Task Extraction
+Description
+Convert emails into structured tasks.
+Requirements
+Extract:
+Action items
+Deadlines
+Deliverables
+Required next steps
+Assigned role (if identifiable)
+Integrations
+ClickUp API
+Notion API
+Jira API
+Trello API
+
+⭐ 3.7 Company Context Engine
+Description
+Allow users to configure company data that AI should use.
+Inputs
+Company description
+Product/service details
+Policies
+Team roles (sales, support, billing)
+Tone of voice
+FAQ
+Custom guidelines
+Usage
+Used by:
+Auto-reply drafting
+Classification
+Summaries
+Escalation
+Task extraction
+
+⭐ 3.8 AI Auto-Reply Drafting
+Description
+AI drafts replies based on:
+Email thread
+Company context
+Tone preferences
+Policies
+Expected user intent
+Requirements
+Draft-only (no automatic sending)
+“Rewrite” options:
+Shorter
+Longer
+More formal
+More friendly
+Show draft inside Chrome extension
+
+⭐ 3.9 Chrome Extension
+Description
+Sidebar inside Gmail/Outlook showing:
+Summary
+Priority
+Sentiment
+Suggested reply
+Tasks
+Escalation tag
+
+⭐ 3.10 Web Dashboard
+Simple dashboard for:
+Viewing synced emails
+Seeing summaries
+Managing company context
+Integrations (Slack, ClickUp, Notion…)
+Basic analytics (SLA breaches, urgent emails this week)
+
+4. Feature Prioritization (MoSCoW)
+Must Have (MVP)
+OAuth + sync
+Thread summary
+Priority classification
+Sentiment detection
+Slack escalation
+Task extraction
+Company context
+Auto-reply drafting
+Chrome extension sidebar
+Should Have
+Task status syncing from ClickUp/Notion
+Bulk company context upload (CSV, JSON)
+Could Have
+Custom rules automation
+Calendar conflict detection
+Won’t Have (Phase 1)
+Auto-send replies
+Multi-inbox unified view
+Team-level inbox assignment logic
+Billing automations (invoices → QuickBooks)
+
+5. User Flows
+5.1 Onboarding Flow
+User signs up
+Connect Gmail or Outlook
+Initial sync runs
+User sets company context
+User connects Slack + task tools
+Extension installed
+Ready to use
+
+5.2 Daily Workflow
+New email arrives
+System:
+Classifies priority
+Summarizes thread
+Extracts tasks
+Drafts reply
+Checks sentiment
+If critical → Slack Alert
+User edits & sends AI draft
+
+6. Technical Requirements
+6.1 Backend
+Node.js / Python
+PostgreSQL
+Redis (queues + rate limits)
+OAuth token vault
+Background workers (email sync every 2–5 mins per user)
+
+6.2 Chrome Extension
+React
+Uses Gmail/Outlook DOM injection
+Calls backend APIs
+
+6.3 LLM Pipeline
+LLM provider (OpenAI / Gemini / Claude)
+Prompt templates for:
+Summary
+Classification
+Sentiment
+Reply drafting
+Task extraction
+Context injection
+
+7. Constraints
+Must respect Gmail API quotas
+Must not auto-send emails (legal + deliverability risks)
+Context size must be limited (<8K tokens after compression)
+Sync must be incremental
+
+8. Risks
+Technical
+Gmail API rate limits
+Outlook Graph throttling
+HTML email parsing complexity
+LLM inaccuracies
+Business
+Trust concerns with email reading
+Similar tools emerging
+Chrome extension reliability
+
+9. Future Enhancements (Phase 2+)
+Team assignment workflow
+Collision detection
+Deep analytics dashboard
+Shared team inbox
+Entity extraction → CRM updates
+Auto-tagging categories (billing, support, contract)
+
+10. Appendix
+Detailed prompt templates
+Data model
+API endpoints
+UI wireframes
+(If you want, I can generate these next.)
+
+Your PRD is ready.
+If you want, I can now create:
+✅ Architecture diagram
+✅ Database schema
+✅ LLM prompt library (all prompts)
+✅ Engineering roadmap (3 weeks)
+Just tell me what you want next.

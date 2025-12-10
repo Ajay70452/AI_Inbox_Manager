@@ -1,0 +1,197 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>AI Inbox Manager</title>
+  <link rel="stylesheet" href="sidebar.css">
+</head>
+<body>
+  <!-- Sidebar Container -->
+  <div id="sidebar-root" class="sidebar-root">
+
+    <!-- Header -->
+    <div class="sidebar-header">
+      <div class="sidebar-logo">
+        <svg width="24" height="24" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+          <path d="M12 2L2 7L12 12L22 7L12 2Z" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
+          <path d="M2 17L12 22L22 17" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
+          <path d="M2 12L12 17L22 12" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
+        </svg>
+        <span>AI Inbox</span>
+      </div>
+      <button id="close-sidebar" class="icon-button" title="Close sidebar">
+        <svg width="20" height="20" viewBox="0 0 20 20" fill="none">
+          <path d="M15 5L5 15M5 5L15 15" stroke="currentColor" stroke-width="2" stroke-linecap="round"/>
+        </svg>
+      </button>
+    </div>
+
+    <!-- Auth Section (shown when not authenticated) -->
+    <div id="auth-section" class="auth-section" style="display: none;">
+      <div class="auth-content">
+        <h2>Welcome to AI Inbox Manager</h2>
+        <p>Sign in to access AI-powered email insights</p>
+
+        <form id="login-form" class="auth-form">
+          <div class="form-group">
+            <label for="email">Email</label>
+            <input type="email" id="email" name="email" required>
+          </div>
+          <div class="form-group">
+            <label for="password">Password</label>
+            <input type="password" id="password" name="password" required>
+          </div>
+          <button type="submit" class="btn btn-primary">Sign In</button>
+          <div class="auth-error" id="auth-error" style="display: none;"></div>
+        </form>
+
+        <p class="auth-switch">
+          Don't have an account? <a href="#" id="show-signup">Sign up</a>
+        </p>
+      </div>
+    </div>
+
+    <!-- Main Content (shown when authenticated) -->
+    <div id="main-content" class="main-content" style="display: none;">
+
+      <!-- No Thread State -->
+      <div id="no-thread" class="no-thread" style="display: none;">
+        <div class="empty-state">
+          <svg width="64" height="64" viewBox="0 0 64 64" fill="none">
+            <circle cx="32" cy="32" r="30" stroke="currentColor" stroke-width="2" opacity="0.2"/>
+            <path d="M20 28L32 38L44 28" stroke="currentColor" stroke-width="2" stroke-linecap="round"/>
+          </svg>
+          <h3>No email selected</h3>
+          <p>Select an email to view AI insights</p>
+        </div>
+      </div>
+
+      <!-- Loading State -->
+      <div id="loading" class="loading" style="display: none;">
+        <div class="spinner"></div>
+        <p>Loading AI insights...</p>
+      </div>
+
+      <!-- AI Insights Content -->
+      <div id="insights-content" class="insights-content" style="display: none;">
+
+        <!-- Thread Info -->
+        <div class="thread-info">
+          <h3 id="thread-subject" class="thread-subject"></h3>
+          <div id="thread-meta" class="thread-meta"></div>
+        </div>
+
+        <!-- AI Summary -->
+        <section class="insight-section">
+          <div class="section-header">
+            <h4>AI Summary</h4>
+            <button id="regenerate-summary" class="icon-button" title="Regenerate">
+              <svg width="16" height="16" viewBox="0 0 16 16" fill="none">
+                <path d="M14 8C14 11.3137 11.3137 14 8 14C4.68629 14 2 11.3137 2 8C2 4.68629 4.68629 2 8 2C9.84 2 11.49 2.82 12.58 4.13" stroke="currentColor" stroke-width="1.5" stroke-linecap="round"/>
+                <path d="M10 4H14V8" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/>
+              </svg>
+            </button>
+          </div>
+          <div id="summary-content" class="content-box">
+            <p class="placeholder">No summary available</p>
+          </div>
+        </section>
+
+        <!-- Priority & Sentiment -->
+        <div class="badges-row">
+          <div class="badge-item">
+            <span class="badge-label">Priority</span>
+            <span id="priority-badge" class="badge">-</span>
+          </div>
+          <div class="badge-item">
+            <span class="badge-label">Sentiment</span>
+            <span id="sentiment-badge" class="badge">-</span>
+          </div>
+        </div>
+
+        <!-- Tasks -->
+        <section class="insight-section">
+          <div class="section-header">
+            <h4>Extracted Tasks</h4>
+            <span id="task-count" class="count-badge">0</span>
+          </div>
+          <div id="tasks-content" class="tasks-list">
+            <p class="placeholder">No tasks extracted</p>
+          </div>
+        </section>
+
+        <!-- Auto-Reply Draft -->
+        <section class="insight-section">
+          <div class="section-header">
+            <h4>Auto-Reply Draft</h4>
+            <button id="regenerate-reply" class="icon-button" title="Regenerate">
+              <svg width="16" height="16" viewBox="0 0 16 16" fill="none">
+                <path d="M14 8C14 11.3137 11.3137 14 8 14C4.68629 14 2 11.3137 2 8C2 4.68629 4.68629 2 8 2C9.84 2 11.49 2.82 12.58 4.13" stroke="currentColor" stroke-width="1.5" stroke-linecap="round"/>
+                <path d="M10 4H14V8" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/>
+              </svg>
+            </button>
+          </div>
+          <div id="reply-preview" class="content-box reply-box">
+            <p class="placeholder">No draft available</p>
+          </div>
+          <textarea id="reply-editor" class="reply-editor" style="display: none;" placeholder="Edit your reply..."></textarea>
+          <div id="reply-actions" class="reply-actions" style="display: none;">
+            <button id="edit-reply" class="btn btn-secondary">Edit</button>
+            <button id="copy-reply" class="btn btn-secondary">Copy</button>
+            <button id="send-reply" class="btn btn-primary">Copy & Use</button>
+          </div>
+          <div id="reply-edit-actions" class="reply-actions" style="display: none;">
+            <button id="cancel-edit" class="btn btn-secondary">Cancel</button>
+            <button id="save-edit" class="btn btn-primary">Copy & Use</button>
+          </div>
+        </section>
+
+        <!-- Actions -->
+        <section class="insight-section">
+          <div class="section-header">
+            <h4>Quick Actions</h4>
+          </div>
+          <div class="actions-grid">
+            <button id="send-to-slack" class="action-btn" disabled>
+              <svg width="20" height="20" viewBox="0 0 20 20" fill="currentColor">
+                <path d="M6.5 2C5.67 2 5 2.67 5 3.5C5 4.33 5.67 5 6.5 5H8V3.5C8 2.67 7.33 2 6.5 2Z"/>
+                <path d="M8 6.5V8H6.5C5.67 8 5 7.33 5 6.5C5 5.67 5.67 5 6.5 5H8V6.5Z"/>
+              </svg>
+              Send to Slack
+            </button>
+            <button id="create-task" class="action-btn" disabled>
+              <svg width="20" height="20" viewBox="0 0 20 20" fill="none" stroke="currentColor">
+                <path d="M5 10L8.5 13.5L15 7" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
+              </svg>
+              Create Task
+            </button>
+          </div>
+        </section>
+
+      </div>
+    </div>
+
+    <!-- Footer -->
+    <div class="sidebar-footer">
+      <button id="settings-btn" class="footer-btn">
+        <svg width="16" height="16" viewBox="0 0 16 16" fill="none">
+          <circle cx="8" cy="8" r="2" stroke="currentColor" stroke-width="1.5"/>
+          <path d="M8 1V3M8 13V15M15 8H13M3 8H1M13.5 2.5L12 4M4 12L2.5 13.5M13.5 13.5L12 12M4 4L2.5 2.5" stroke="currentColor" stroke-width="1.5" stroke-linecap="round"/>
+        </svg>
+        Settings
+      </button>
+      <button id="logout-btn" class="footer-btn" style="display: none;">
+        <svg width="16" height="16" viewBox="0 0 16 16" fill="none">
+          <path d="M10 14H14V2H10M6 11L3 8L6 5M3 8H12" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/>
+        </svg>
+        Logout
+      </button>
+    </div>
+
+  </div>
+
+  <script src="../utils/api-client.js"></script>
+  <script src="sidebar.js"></script>
+</body>
+</html>

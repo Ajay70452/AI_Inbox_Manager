@@ -1,0 +1,285 @@
+ A. ERD (ASCII Diagram)
+                            ┌──────────────────────┐
+                            │        users         │
+                            ├──────────────────────┤
+                            │ id (PK)              │
+                            │ name                 │
+                            │ email                │
+                            │ password_hash        │
+                            │ created_at           │
+                            └─────────┬────────────┘
+                                      │ 1:N
+                                      │
+                                      ▼
+                   ┌────────────────────────────┐
+                   │      account_tokens        │
+                   ├────────────────────────────┤
+                   │ id (PK)                    │
+                   │ user_id (FK -> users.id)   │
+                   │ provider (gmail/outlook)   │
+                   │ access_token               │
+                   │ refresh_token (encrypted)  │
+                   │ expires_at                 │
+                   │ email_address              │
+                   └────────────────────────────┘
+
+
+users 1:N threads
+threads 1:N emails
+threads 1:1 ai_thread_summary
+threads 1:1 ai_priority
+threads 1:1 ai_sentiment
+threads 1:N tasks
+threads 1:1 ai_reply_draft
+
+
+┌──────────────────────┐
+│       threads        │
+├──────────────────────┤
+│ id (PK)              │
+│ user_id (FK)         │
+│ thread_id_provider   │
+│ subject              │
+│ last_message_at      │
+│ created_at           │
+└──────────┬───────────┘
+           │ 1:N
+           ▼
+    ┌─────────────────────────┐
+    │         emails          │
+    ├─────────────────────────┤
+    │ id (PK)                 │
+    │ thread_id (FK)          │
+    │ user_id (FK)            │
+    │ email_id_provider       │
+    │ sender                  │
+    │ recipients              │
+    │ body_html_url           │
+    │ body_text_clean         │
+    │ timestamp               │
+    └─────────────────────────┘
+
+
+    ┌───────────────────────────┐
+    │    ai_thread_summary      │
+    ├───────────────────────────┤
+    │ id (PK)                   │
+    │ thread_id (FK)            │
+    │ summary_text              │
+    │ model_used                │
+    │ created_at                │
+    └───────────────────────────┘
+
+    ┌───────────────────────────┐
+    │        ai_priority        │
+    ├───────────────────────────┤
+    │ id (PK)                   │
+    │ thread_id (FK)            │
+    │ priority_level            │
+    │ category                  │
+    │ created_at                │
+    └───────────────────────────┘
+
+    ┌───────────────────────────┐
+    │       ai_sentiment        │
+    ├───────────────────────────┤
+    │ id (PK)                   │
+    │ thread_id (FK)            │
+    │ sentiment_score           │
+    │ sentiment_label           │
+    │ anger_level               │
+    │ urgency_score             │
+    │ created_at                │
+    └───────────────────────────┘
+
+    ┌───────────────────────────┐
+    │          tasks            │
+    ├───────────────────────────┤
+    │ id (PK)                   │
+    │ thread_id (FK)            │
+    │ title                     │
+    │ description               │
+    │ due_date                  │
+    │ extracted_owner           │
+    │ status                    │
+    │ created_at                │
+    └───────────────────────────┘
+
+
+    ┌────────────────────────────┐
+    │      ai_reply_draft        │
+    ├────────────────────────────┤
+    │ id (PK)                    │
+    │ thread_id (FK)             │
+    │ draft_text                 │
+    │ tone_used                  │
+    │ created_at                 │
+    └────────────────────────────┘
+
+
+┌────────────────────────────────┐
+│        company_context         │
+├────────────────────────────────┤
+│ id (PK)                        │
+│ user_id (FK)                   │
+│ tone                           │
+│ company_description            │
+│ products (JSON)                │
+│ policies (JSON)                │
+│ faq (JSON)                     │
+│ roles (JSON)                   │
+│ created_at                     │
+│ updated_at                     │
+└────────────────────────────────┘
+
+
+┌────────────────────────────────┐
+│         integrations           │
+├────────────────────────────────┤
+│ id (PK)                        │
+│ user_id (FK)                   │
+│ type (slack/notion/clickup…)  │
+│ access_token                   │
+│ refresh_token                  │
+│ workspace_id / team_id         │
+│ metadata (JSON)                │
+│ created_at                     │
+└────────────────────────────────┘
+
+
+┌────────────────────────────────┐
+│       sync_job_logs            │
+├────────────────────────────────┤
+│ id (PK)                        │
+│ user_id (FK)                   │
+│ provider (gmail/outlook)       │
+│ status (success/error)         │
+│ run_time_ms                    │
+│ message                        │
+│ created_at                     │
+└────────────────────────────────┘
+
+🗄️ B. Table-by-Table Schema Definitions
+Below are the exact table designs you will implement in PostgreSQL.
+
+1. users
+id (UUID, PK)
+name (text)
+email (text, unique)
+password_hash (text)
+created_at (timestamp)
+
+2. account_tokens
+Stores Gmail & Outlook tokens.
+id (UUID, PK)
+user_id (FK)
+provider (varchar)      -- gmail / outlook
+email_address (text)
+access_token (text)
+refresh_token (text encrypted)
+expires_at (timestamp)
+created_at (timestamp)
+
+3. threads
+id (UUID, PK)
+user_id (FK)
+thread_id_provider (varchar)  -- Gmail thread id or Outlook conversation id
+subject (text)
+last_message_at (timestamp)
+created_at (timestamp)
+
+4. emails
+id (UUID, PK)
+thread_id (FK)
+user_id (FK)
+email_id_provider (varchar)
+sender (text)
+recipients (jsonb)
+body_html_url (text)       -- stored in S3/R2
+body_text_clean (text)
+timestamp (timestamp)
+
+5. ai_thread_summary
+id (UUID, PK)
+thread_id (FK)
+summary_text (text)
+model_used (varchar)
+created_at (timestamp)
+
+6. ai_priority
+id (UUID, PK)
+thread_id (FK)
+priority_level (varchar)   -- urgent, customer, vendor, internal, low
+category (varchar)
+created_at (timestamp)
+
+7. ai_sentiment
+id (UUID, PK)
+thread_id (FK)
+sentiment_score (float)
+sentiment_label (varchar)  -- positive, neutral, negative
+anger_level (float)
+urgency_score (float)
+created_at (timestamp)
+
+8. tasks
+id (UUID, PK)
+thread_id (FK)
+title (text)
+description (text)
+due_date (timestamp null)
+extracted_owner (varchar)
+status (varchar default 'pending')
+created_at (timestamp)
+
+9. ai_reply_draft
+id (UUID, PK)
+thread_id (FK)
+draft_text (text)
+tone_used (varchar)
+created_at (timestamp)
+
+10. company_context
+id (UUID, PK)
+user_id (FK)
+tone (text)
+company_description (text)
+products (jsonb)
+policies (jsonb)
+faq (jsonb)
+roles (jsonb)
+created_at (timestamp)
+updated_at (timestamp)
+
+11. integrations
+id (UUID, PK)
+user_id (FK)
+type (varchar)              -- slack/notion/clickup/jira/trello
+access_token (text)
+refresh_token (text)
+workspace_id (text)
+metadata (jsonb)
+created_at (timestamp)
+
+12. sync_job_logs
+id (UUID, PK)
+user_id (FK)
+provider (varchar)          -- gmail/outlook
+status (varchar)
+run_time_ms (int)
+message (text)
+created_at (timestamp)
+
+✔️ This ERD fully supports all Phase-1 MVP features:
+OAuth
+Email sync
+Thread summaries
+Priority classification
+Sentiment detection
+Task extraction
+Auto-reply drafting
+Company context
+Integrations
+Analytics
+Logging/debugging
+Everything fits cleanly into FastAPI + PostgreSQL.
